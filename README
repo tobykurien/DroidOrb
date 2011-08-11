@@ -1,0 +1,72 @@
+DroidOrb
+========
+
+DroidOrb is an extensible, open sourced Android accessory. In it's barest form, 
+it is a bedside or table-top dock for your Android phone that will charge the 
+phone, and provide external notifications via it's "orb", which is a translucent 
+white ball containing RGB and white LED's. The orb will glow and pulsate in various 
+colours depending on the configuration of the DroidOrb app on the phone, and is used 
+primarily for alerting the user to notifications such as missed calls, missed e-mails, 
+etc.
+
+The extensability factor allows modules to be plugged into the DroidOrb to provide 
+additional integration. An example of a module would be a home automation module, 
+allowing the phone to control lights and appliances while docked. Other ideas include 
+an alarm system interface, interactive elements such as sound and light sensors, 
+barometers and temperature sensors for weather prediction, etc.
+
+Requirements
+============
+
+You will need the following to build this DroidOrb prototype:
+
+Hardware:
+- Arduino Uno board
+- Sparkfun USB Host shield
+- 3 LEDs: Red, Green, and Blue (preferably high-bright clear type)
+  One RGB LED would work even better
+- 3x 470 ohm resistors (1k should be fine too)
+- 9V battery or wall plug to power the Arduino and charge the phone
+- breadboard for ease, but you can solder the components onto the space
+  provided on the USB host shield if you want to
+- Android phone/tablet with USB cable
+
+Optional:
+- Table tennis ball for the orb
+- Some aluminium foil for reflector to help diffuse the LED light
+
+Software:
+- Arduino development environment
+- Microbridge library for Arduino: http://code.google.com/p/microbridge/
+
+Construction
+============
+
+- Connect the USB host shield to the Arduino Uno board
+- Connect pin 3 to the Blue LED, via a 470 ohm resistor to ground
+- Connect pin 5 to the Green LED, via a 470 ohm resistor to ground
+- Connect pin 6 to the Red LED, via a 470 ohm resistor to ground
+
+Optional:
+- Cut a small circle off the table tennis ball
+- Stick a small piece of foil over the top of the LEDs
+- Place the table tennis ball over the LEDS and stick in place with Prestik or similar
+
+- Connect Arduino to your laptop/PC
+- Fire up the Arduino IDE, load the droid_orb.pde project
+- Compile and upload the firmware
+
+Usage
+=====
+
+- Connect the 9V power to the Arduino board
+- Enable USB Debugging on your Android phone
+- Use Android SDK to compile and upload the Android app to your phone
+- Unplug the phone from your PC/laptop and plug it into the Arduino USB host shield port
+- Open the DroidOrb app
+- It should say "accessory connected". If not, there may be a problem somewhere.
+- Click the "Test" button to see the red LED pulsate
+- Use the sliders to set the inidividual brightness of each LED, then click "Set Colour" 
+  to apply the setting
+
+

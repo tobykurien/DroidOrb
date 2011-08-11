@@ -64,9 +64,17 @@ Usage
 - Use Android SDK to compile and upload the Android app to your phone
 - Unplug the phone from your PC/laptop and plug it into the Arduino USB host shield port
 - Open the DroidOrb app
-- It should say "accessory connected". If not, there may be a problem somewhere.
+- It should say "accessory connected". If not, is a problem somewhere. Try resetting the 
+  Arduino. Also monitor the serial output to spot any problems.
 - Click the "Test" button to see the red LED pulsate
 - Use the sliders to set the inidividual brightness of each LED, then click "Set Colour" 
   to apply the setting
 
+How to contribute
+=================
+
+This project is still in it's infancy and any contributions are welcome, whether it is 
+code, design, prototype building, or just ideas. Please see the Issues list for some of 
+the ideas and work that needs to be done. Feel free to jump in and add comments or ideas 
+that may be useful to this project.
 

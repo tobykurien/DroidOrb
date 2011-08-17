@@ -5,21 +5,23 @@ import java.io.IOException;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.CallLog.Calls;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.droidorb.observer.MissedCallsContentObserver;
+import com.droidorb.observer.OnMissedCallListener;
 import com.droidorb.server.Client;
 import com.droidorb.server.Server;
 import com.droidorb.server.ServerListener;
 
-public class DroidOrbActivity extends Activity {
+public class DroidOrbActivity extends Activity implements OnMissedCallListener {
    public static final int SERVER_PORT = 4567;
-   
-   Handler handler = new Handler();
    Server server = null;
+   MissedCallsContentObserver mcco = new MissedCallsContentObserver(this, this);
 
    /** Called when the activity is first created. */
    @Override
@@ -27,10 +29,9 @@ public class DroidOrbActivity extends Activity {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
 
-      TextView t = (TextView) findViewById(R.id.status);
-
       // Create TCP server
       server = new Server(SERVER_PORT);
+      mcco.start();
    }
 
    @Override
@@ -117,6 +118,23 @@ public class DroidOrbActivity extends Activity {
           data[0] = (byte) ((ProgressBar) findViewById(R.id.red)).getProgress();
           data[1] = (byte) ((ProgressBar) findViewById(R.id.green)).getProgress();
           data[2] = (byte) ((ProgressBar) findViewById(R.id.blue)).getProgress();
+         
+         server.send(data);
+      } catch (IOException e) {
+         Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+         Log.e("DroidOrb", "Error sending command to accessory", e);
+      }
+   }
+  
+   @Override
+   public void onMissedCall(int missedCalls) {
+      if (Debug.MISSED_CALLS) Log.d(Main.LOG_TAG, "Got missed calls " + missedCalls);
+      try {
+         // light up blue when there is a missed call
+         byte[] data = new byte[3];
+          data[0] = (byte) 0;
+          data[1] = (byte) 0;
+          data[2] = (byte) 255;
          
          server.send(data);
       } catch (IOException e) {

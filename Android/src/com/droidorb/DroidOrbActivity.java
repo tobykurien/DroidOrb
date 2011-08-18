@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.CallLog.Calls;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +31,11 @@ public class DroidOrbActivity extends Activity implements OnMissedCallListener {
 
       // Create TCP server
       server = new Server(SERVER_PORT);
+      
+      // start missed calls listener
       mcco.start();
+
+      setupSeekbarListeners();
    }
 
    @Override
@@ -99,9 +103,35 @@ public class DroidOrbActivity extends Activity implements OnMissedCallListener {
 
    @Override
    protected void onStop() {
-      super.onStop();
       server.stop();
+      mcco.stop();
+      
+      super.onStop();
    }
+   
+   /**
+    * Add a listener so that the LED's update as the skee bar is dragged
+    */
+   private void setupSeekbarListeners() {
+      OnSeekBarChangeListener listener = new OnSeekBarChangeListener() {
+         @Override
+         public void onStopTrackingTouch(SeekBar arg0) {
+         }
+         
+         @Override
+         public void onStartTrackingTouch(SeekBar arg0) {
+         }
+         
+         @Override
+         public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+            onColoursClick(null);
+         }
+      };      
+      
+      ((SeekBar) findViewById(R.id.red)).setOnSeekBarChangeListener(listener);
+      ((SeekBar) findViewById(R.id.green)).setOnSeekBarChangeListener(listener);
+      ((SeekBar) findViewById(R.id.blue)).setOnSeekBarChangeListener(listener);
+   }   
 
    public void onCommandClick(View v) {
       try {

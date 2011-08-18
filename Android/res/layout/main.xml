@@ -18,6 +18,7 @@
       android:background="#ffff0000"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
+      android:padding="6dp"
       android:max="255"/>
 
    <SeekBar 
@@ -25,6 +26,7 @@
       android:background="#ff00ff00"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
+      android:padding="6dp"
       android:max="255"/>
 
    <SeekBar 
@@ -32,6 +34,7 @@
       android:background="#ff0000ff"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
+      android:padding="6dp"
       android:max="255"/>
 
    <Button

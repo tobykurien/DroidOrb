@@ -207,8 +207,13 @@ public class Server
 	 */
 	public void send(byte[] data) throws IOException
 	{
+	   // append \n to the end of the command and send
+	   byte[] data2 = new byte[data.length + 1];
+	   for (int i=0; i < data.length; i++) data2[i] = data[i];
+	   data2[data.length] = '\n';
+	   
 		for (Client client : clients) {
-         client.send(data.toString() + "\n");
+         client.send(data2);
 		}
 	}
 

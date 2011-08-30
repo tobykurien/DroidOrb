@@ -12,6 +12,12 @@
       android:layout_height="wrap_content"
       android:onClick="onCommandClick"/>
 
+   <TextView
+      android:text="Brightness"
+      android:layout_width="fill_parent" 
+      android:layout_height="wrap_content"
+      android:paddingTop="20dp"
+      />
 
    <SeekBar 
       android:id="@+id/red"
@@ -36,12 +42,45 @@
       android:layout_height="wrap_content"
       android:padding="6dp"
       android:max="255"/>
+   
+   <TextView
+      android:text="Pulse"
+      android:layout_width="fill_parent" 
+      android:layout_height="wrap_content"
+      android:paddingTop="20dp"
+      />
 
-   <Button
-      android:text="Set colours"
+   <SeekBar 
+      android:id="@+id/red_pulse"
+      android:background="#ffff0000"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:onClick="onColoursClick"/>
+      android:padding="6dp"
+      android:max="255"/>
+
+   <SeekBar 
+      android:id="@+id/green_pulse"
+      android:background="#ff00ff00"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:padding="6dp"
+      android:max="255"/>
+
+   <SeekBar 
+      android:id="@+id/blue_pulse"
+      android:background="#ff0000ff"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:padding="6dp"
+      android:max="255"/>   
+
+   <SeekBar 
+      android:id="@+id/white_pulse"
+      android:background="#ffffffff"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:padding="6dp"
+      android:max="255"/>   
    
    <!--  spring  -->
    <ImageView

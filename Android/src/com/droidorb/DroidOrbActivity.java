@@ -137,6 +137,39 @@ public class DroidOrbActivity extends Activity implements OnMissedCallListener {
       ((SeekBar) findViewById(R.id.red)).setOnSeekBarChangeListener(listener);
       ((SeekBar) findViewById(R.id.green)).setOnSeekBarChangeListener(listener);
       ((SeekBar) findViewById(R.id.blue)).setOnSeekBarChangeListener(listener);
+      
+      OnSeekBarChangeListener listener2 = new OnSeekBarChangeListener() {
+         @Override
+         public void onStopTrackingTouch(SeekBar arg0) {
+         }
+
+         @Override
+         public void onStartTrackingTouch(SeekBar arg0) {
+         }
+
+         @Override
+         public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+            try {
+               byte[] data = new byte[6];
+               data[0] = 0; // DroidOrb address
+               data[1] = 1; // set LED pulse command
+               data[2] = (byte) ((ProgressBar) findViewById(R.id.red_pulse)).getProgress();
+               data[3] = (byte) ((ProgressBar) findViewById(R.id.green_pulse)).getProgress();
+               data[4] = (byte) ((ProgressBar) findViewById(R.id.blue_pulse)).getProgress();
+               data[5] = (byte) ((ProgressBar) findViewById(R.id.white_pulse)).getProgress();
+
+               server.send(data);
+            } catch (IOException e) {
+               //Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+               Log.e("DroidOrb", "Error sending command to accessory", e);
+            }            
+         }
+      };
+
+      ((SeekBar) findViewById(R.id.red_pulse)).setOnSeekBarChangeListener(listener2);
+      ((SeekBar) findViewById(R.id.green_pulse)).setOnSeekBarChangeListener(listener2);
+      ((SeekBar) findViewById(R.id.blue_pulse)).setOnSeekBarChangeListener(listener2);
+      ((SeekBar) findViewById(R.id.white_pulse)).setOnSeekBarChangeListener(listener2);
    }
 
    public void onCommandClick(View v) {

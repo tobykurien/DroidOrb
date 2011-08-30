@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -206,8 +207,9 @@ public class Server
 	 */
 	public void send(byte[] data) throws IOException
 	{
-		for (Client client : clients)
-			client.send(data);
+		for (Client client : clients) {
+         client.send(data.toString() + "\n");
+		}
 	}
 
 	/**

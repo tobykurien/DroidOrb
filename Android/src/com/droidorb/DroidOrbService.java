@@ -66,7 +66,7 @@ public class DroidOrbService extends Service {
       mcco = new MissedCallsContentObserver(this, new OnMissedCallListener() {
          @Override
          public void onMissedCall(int missedCalls) {
-
+            showNotification("Missed call detected");
          }
       });
 
@@ -137,6 +137,7 @@ public class DroidOrbService extends Service {
 
       // Set the info for the views that show in the notification panel.
       notification.setLatestEventInfo(this, "DroidOrb", text, contentIntent);
+      notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
       // Send the notification.
       mNM.notify(NOTIFICATION, notification);

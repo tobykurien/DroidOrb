@@ -43,6 +43,7 @@ uint8_t blue_pulse_val = 0; // value for pulsing
 
 bool white_on = false;
 uint8_t white_pulse_val = 0; // value for pulsing
+uint8_t white_pulse_rate = 0;
 
 bool lights_off = false;
 
@@ -80,6 +81,7 @@ void adbEventHandler(Connection * connection, adb_eventType event, uint16_t leng
           green_pulse = data[3];
           blue_pulse = data[4];
           white_pulse = data[5];
+          updateLEDs();
           break;
 
         case CMD_RESET:
@@ -136,7 +138,7 @@ void setup()
   lastTime = millis();
 
   // Initialize timer
-  Timer1.initialize(1000); // 1ms timer resolution
+  Timer1.initialize(100); // 100ns timer resolution
   Timer1.attachInterrupt(timerInterrupt);
 
   // Initialise the ADB subsystem.  
@@ -161,16 +163,22 @@ void timerInterrupt()
   updateLEDs();  
 
   // white LED is simple ON/OFF
-  if (!lights_off) {
-    if (white_pulse > 0) {
-      if (white_pulse_val++ >= white_pulse) {
-        white_pulse_val = 0;
-        digitalWrite(LED_WHITE, white_on = white_on ^ HIGH);
+  if (white_pulse_rate == 0) {
+    white_pulse_rate = 10;
+    if (!lights_off) {
+      if (white_pulse > 0) {
+        if (white_pulse_val++ >= white_pulse) {
+          white_pulse_val = 0;
+          digitalWrite(LED_WHITE, white_on = white_on ^ HIGH);
+        }
+      } else {
+        digitalWrite(LED_WHITE, LOW);
       }
-    } else {
-      digitalWrite(LED_WHITE, LOW);
     }
+  } else {
+    white_pulse_rate--;
   }
+
 
   in_interrupt = false;
 }
@@ -178,13 +186,14 @@ void timerInterrupt()
 // Pulse an LED by using the state variables to set the right PWM value
 void pulse(uint8_t* r, uint8_t* r_pulse, uint8_t* r_pulse_val, bool* r_dir) {
   // variables are passed in by reference so they have to be dereferenced
+  uint8_t step = 1;
 
   if (*r_pulse > 0) {
-    if ((*r_pulse_val)++ >= *r_pulse) {
+    if (((*r_pulse_val) += step) >= *r_pulse) {
       *r_pulse_val = 0;
 
       if ((*r_dir) == false) {
-        if ((*r)-- == 0) {
+        if (((*r) -= step) == 0) {
           *r_dir = true;
           *r = 0;
         }

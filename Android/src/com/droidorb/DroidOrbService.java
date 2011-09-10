@@ -64,7 +64,7 @@ public class DroidOrbService extends Service {
     * @param params
     * @throws IOException
     */
-   public void sendCommand(byte deviceId, byte command, byte[] params) throws IOException {
+   public void sendCommand(byte deviceId, byte command, byte[] params) {
       if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service sendCommand()");
 
       int paramLen = (params == null ? 0 : params.length);
@@ -82,6 +82,7 @@ public class DroidOrbService extends Service {
             msg += String.valueOf(data[i]) + ",";
          Log.d(Main.LOG_TAG, msg);
       }
+      
       server.send(data);
    }
 
@@ -94,7 +95,7 @@ public class DroidOrbService extends Service {
 
       // Display a notification about us starting. We put an icon in the status
       // bar.
-      showNotification("Waiting for accessory...");
+      showNotification("Started");
 
       // missed call observer
       if (mcco == null) {
@@ -103,7 +104,9 @@ public class DroidOrbService extends Service {
          mcco = new MissedCallsContentObserver(this, new OnMissedCallListener() {
             @Override
             public void onMissedCall(int missedCalls) {
+               if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service detected missed call");
                showNotification("Missed call detected");
+               sendCommand((byte) 0, (byte) 1, new byte[] { 10, 0, 0, 50 });
             }
          });
          
@@ -135,6 +138,7 @@ public class DroidOrbService extends Service {
 
             @Override
             public void onClientDisconnect(Server server, Client client) {
+               showNotification("Accessory disconnected");
                Log.d(Main.LOG_TAG, "accessory disconnected");
             }
 

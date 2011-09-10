@@ -30,7 +30,7 @@ public class DroidOrbActivity extends Activity {
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
-      
+
       setupSeekbarListeners();
    }
 
@@ -66,7 +66,7 @@ public class DroidOrbActivity extends Activity {
       ((SeekBar) findViewById(R.id.red)).setOnSeekBarChangeListener(listener);
       ((SeekBar) findViewById(R.id.green)).setOnSeekBarChangeListener(listener);
       ((SeekBar) findViewById(R.id.blue)).setOnSeekBarChangeListener(listener);
-      
+
       OnSeekBarChangeListener listener2 = new OnSeekBarChangeListener() {
          @Override
          public void onStopTrackingTouch(SeekBar arg0) {
@@ -78,18 +78,13 @@ public class DroidOrbActivity extends Activity {
 
          @Override
          public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-            try {
-               byte[] data = new byte[4];
-               data[0] = (byte) ((ProgressBar) findViewById(R.id.red_pulse)).getProgress();
-               data[1] = (byte) ((ProgressBar) findViewById(R.id.green_pulse)).getProgress();
-               data[2] = (byte) ((ProgressBar) findViewById(R.id.blue_pulse)).getProgress();
-               data[3] = (byte) ((ProgressBar) findViewById(R.id.white_pulse)).getProgress();
+            byte[] data = new byte[4];
+            data[0] = (byte) ((ProgressBar) findViewById(R.id.red_pulse)).getProgress();
+            data[1] = (byte) ((ProgressBar) findViewById(R.id.green_pulse)).getProgress();
+            data[2] = (byte) ((ProgressBar) findViewById(R.id.blue_pulse)).getProgress();
+            data[3] = (byte) ((ProgressBar) findViewById(R.id.white_pulse)).getProgress();
 
-               Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
-            } catch (IOException e) {
-               Toast.makeText(DroidOrbActivity.this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-               Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
-            }            
+            Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
          }
       };
 
@@ -100,50 +95,30 @@ public class DroidOrbActivity extends Activity {
    }
 
    public void onCommandClick(View v) {
-      try {
-         Main.mBoundService.sendCommand((byte) 0, (byte) 254, null);
-      } catch (IOException e) {
-         Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
-      }
+      Main.mBoundService.sendCommand((byte) 0, (byte) 254, null);
    }
 
    public void onColoursClick(View v) {
-      try {
-         byte[] data = new byte[3];
-         data[0] = (byte) ((ProgressBar) findViewById(R.id.red)).getProgress();
-         data[1] = (byte) ((ProgressBar) findViewById(R.id.green)).getProgress();
-         data[2] = (byte) ((ProgressBar) findViewById(R.id.blue)).getProgress();
+      byte[] data = new byte[3];
+      data[0] = (byte) ((ProgressBar) findViewById(R.id.red)).getProgress();
+      data[1] = (byte) ((ProgressBar) findViewById(R.id.green)).getProgress();
+      data[2] = (byte) ((ProgressBar) findViewById(R.id.blue)).getProgress();
 
-         Main.mBoundService.sendCommand((byte) 0, (byte) 0, data);
-      } catch (IOException e) {
-         Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
-      }
+      Main.mBoundService.sendCommand((byte) 0, (byte) 0, data);
    }
 
    public void onReset(View v) {
-      try {
-         Main.mBoundService.sendCommand((byte) 0, (byte) 3, null);
-      } catch (IOException e) {
-         Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
-      }      
+      Main.mBoundService.sendCommand((byte) 0, (byte) 3, null);
    }
-   
-   public void onMissedCall(View v) {
-      try {
-         // pulse red when there is a missed call
-         byte[] data = new byte[3];
-         data[0] = (byte) 5;
-         data[1] = (byte) 0;
-         data[2] = (byte) 0;
 
-         Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
-      } catch (IOException e) {
-         Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
-      }
+   public void onMissedCall(View v) {
+      // pulse red when there is a missed call
+      byte[] data = new byte[3];
+      data[0] = (byte) 5;
+      data[1] = (byte) 0;
+      data[2] = (byte) 0;
+
+      Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
    }
 
 }

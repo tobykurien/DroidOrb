@@ -214,7 +214,7 @@ public class Server {
     *           data to send
     * @throws IOException
     */
-   public void send(byte[] data) throws IOException {
+   public void send(byte[] data) {
       if (data[data.length - 1] != '\n') {
          // append \n to the end of the command and send
          byte[] data2 = new byte[data.length + 1];
@@ -227,7 +227,12 @@ public class Server {
 
       for (Client client : clients) {
          if (Debug.COMMS) Log.d(Main.LOG_TAG,"Server sending " + new String(data) + " to " + client.toString());
-         client.send(data);
+         try {
+            client.send(data);
+         } catch (IOException e) {
+            // client probably disconnected
+            disconnectClient(client);
+         }
       }
    }
 

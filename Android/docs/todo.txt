@@ -1,9 +1,11 @@
 Android app:
 ===========
 
-- app to run as a service
-- "test" button on the main interface for testing
-- when phone is ringing, blinkg white LED
+bugs:
+- service running in background even after exiting app
+  - prevents app from working when re-loaded
+
+- when phone is ringing, blink white LED
 - missed call notification
 - new e-mail notification
 - new SMS notification
@@ -17,7 +19,4 @@ Arduino firmware:
 ===============
 
 - set the upper and lower limits of pulse rates to practical values
-- implement phone command to read light sensor value
 - use light sensor value to adjust brightness of orb
-- send "lights off" event to phone when light sensor reaches lower threshold
-  - then send "lights on" when it goes higher again (with hysteresis)

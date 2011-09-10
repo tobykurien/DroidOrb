@@ -32,6 +32,12 @@ public class Main extends Activity {
       super.onStart();
    }
    
+   @Override
+   protected void onRestart() {
+      super.onRestart();
+      finish();
+   }
+   
    private ServiceConnection mConnection = new ServiceConnection() {
       public void onServiceConnected(ComponentName className, IBinder service) {
          DroidOrbService.LocalBinder binder = (DroidOrbService.LocalBinder)service;

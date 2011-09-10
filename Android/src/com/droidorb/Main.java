@@ -1,5 +1,7 @@
 package com.droidorb;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,19 +17,23 @@ import android.widget.Toast;
  */
 public class Main extends Activity {
    public static final String LOG_TAG = "DroidOrb";
-   private DroidOrbService mBoundService;
-   private boolean mIsBound;
+   public static DroidOrbService mBoundService;
+   public static boolean mIsBound;
    
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
+
+      doBindService();
+      
+      Intent i = new Intent(this, DroidOrbActivity.class);
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      startActivity(i);
    }
 
    @Override
    protected void onStart() {
       super.onStart();
-      
-      doBindService();
    }
    
    private ServiceConnection mConnection = new ServiceConnection() {
@@ -37,11 +43,19 @@ public class Main extends Activity {
           // interact with the service.  Because we have bound to a explicit
           // service that we know is running in our own process, we can
           // cast its IBinder to a concrete class and directly access it.
-          //mBoundService = ((DroidOrbService.LocalBinder)service).getService();
+         DroidOrbService.LocalBinder binder = (DroidOrbService.LocalBinder)service;
+         mBoundService = binder.getService();
 
           // Tell the user about this for our demo.
           Toast.makeText(Main.this, "DroidOrb service started",
                   Toast.LENGTH_SHORT).show();
+          
+          try {
+             //blink white led
+             mBoundService.sendCommand((byte) 0, (byte) 1, new byte[] { 0, 0, 0, 50});
+          } catch (IOException e) {
+             Toast.makeText(Main.this, "Error sending command" + e.getMessage(), Toast.LENGTH_LONG).show();
+          }
       }
 
       public void onServiceDisconnected(ComponentName className) {
@@ -60,8 +74,7 @@ public class Main extends Activity {
       // class name because we want a specific service implementation that
       // we know will be running in our own process (and thus won't be
       // supporting component replacement by other applications).
-      bindService(new Intent(Main.this, 
-              DroidOrbService.class), mConnection, Context.BIND_AUTO_CREATE);
+      bindService(new Intent(Main.this, DroidOrbService.class), mConnection, Context.BIND_AUTO_CREATE);
       mIsBound = true;
   }
 

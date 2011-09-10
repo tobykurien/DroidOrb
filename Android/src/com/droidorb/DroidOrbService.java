@@ -29,12 +29,12 @@ public class DroidOrbService extends Service {
 
    // Unique Identification Number for the Notification.
    // We use it on Notification start, and to cancel it.
-   private int NOTIFICATION = 10; 
-   
-   Server server = null;
-   MissedCallsContentObserver mcco;
+   private int NOTIFICATION = 10;
+
+   private Server server = null;
+   private MissedCallsContentObserver mcco;
    private NotificationManager mNM;
-   
+
    // This is the object that receives interactions from clients. See
    // RemoteService for a more complete example.
    private final IBinder mBinder = new LocalBinder();
@@ -54,15 +54,43 @@ public class DroidOrbService extends Service {
       }
    }
 
+   /**
+    * Send a DroidOrb command
+    * 
+    * @param deviceId
+    * @param command
+    * @param params
+    * @throws IOException
+    */
+   public void sendCommand(byte deviceId, byte command, byte[] params) throws IOException {
+      int paramLen = (params == null ? 0 : params.length);
+      byte[] data = new byte[paramLen + 3];
+      data[0] = deviceId;
+      data[1] = command;
+      for (int i = 0; i < paramLen; i++)
+         data[i + 2] = params[i];
+      data[data.length - 1] = '\n';
+
+      if (Debug.COMMS) {
+         Log.d(Main.LOG_TAG, "Service sending ");
+         String msg = "";
+         for (int i = 0; i < data.length; i++)
+            msg += String.valueOf(data[i]) + ",";
+         Log.d(Main.LOG_TAG, msg);
+      }
+      server.send(data);
+   }
+
    @Override
    public void onCreate() {
       super.onCreate();
 
-      mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+      mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-      // Display a notification about us starting.  We put an icon in the status bar.
+      // Display a notification about us starting. We put an icon in the status
+      // bar.
       showNotification("Waiting for accessory...");
-      
+
       mcco = new MissedCallsContentObserver(this, new OnMissedCallListener() {
          @Override
          public void onMissedCall(int missedCalls) {
@@ -110,15 +138,15 @@ public class DroidOrbService extends Service {
          Log.e(Main.LOG_TAG, "Error starting TCP/IP server", e);
       }
    }
-   
+
    @Override
    public void onDestroy() {
-       // Cancel the persistent notification.
-       mNM.cancel(NOTIFICATION);
+      // Cancel the persistent notification.
+      mNM.cancel(NOTIFICATION);
 
-       // Tell the user we stopped.
-       Toast.makeText(this, "DroidOrb stopped", Toast.LENGTH_SHORT).show();
-   }   
+      // Tell the user we stopped.
+      Toast.makeText(this, "DroidOrb stopped", Toast.LENGTH_SHORT).show();
+   }
 
    /**
     * Show a notification while this service is running.
@@ -126,7 +154,8 @@ public class DroidOrbService extends Service {
    private void showNotification(String text) {
       // In this sample, we'll use the same text for the ticker and the expanded
       // notification
-      //CharSequence text = "DroidOrb waiting for accessory"; // getText(R.string.local_service_started);
+      // CharSequence text = "DroidOrb waiting for accessory"; //
+      // getText(R.string.local_service_started);
 
       // Set the icon, scrolling text and timestamp
       Notification notification = new Notification(R.drawable.icon, text, System.currentTimeMillis());

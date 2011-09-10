@@ -12,7 +12,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.droidorb.observer.MissedCallsContentObserver;
 import com.droidorb.observer.OnMissedCallListener;
 import com.droidorb.server.Client;
 import com.droidorb.server.Server;
@@ -24,94 +23,22 @@ import com.droidorb.server.ServerListener;
  * 
  * @author toby
  */
-public class DroidOrbActivity extends Activity implements OnMissedCallListener {
-   public static final int SERVER_PORT = 4567;
-   Server server = null;
-   MissedCallsContentObserver mcco = new MissedCallsContentObserver(this, this);
+public class DroidOrbActivity extends Activity {
 
    /** Called when the activity is first created. */
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
-
-      // Create TCP server
-      server = new Server(SERVER_PORT);
-
-      // start missed calls listener
-      mcco.start();
-
-      setupSeekbarListeners();
    }
 
    @Override
    protected void onStart() {
       super.onStart();
-      try {
-         final TextView t = (TextView) findViewById(R.id.status);
-         server.start();
-         server.addListener(new ServerListener() {
-
-            @Override
-            public void onServerStopped(Server server) {
-               runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     t.setText("stopped");
-                  }
-               });
-            }
-
-            @Override
-            public void onServerStarted(Server server) {
-               runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     t.setText("started");
-                  }
-               });
-            }
-
-            @Override
-            public void onReceive(Client client, final byte[] data) {
-               runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     t.setText("data received " + data[0] + data[1]);
-                  }
-               });
-            }
-
-            @Override
-            public void onClientDisconnect(Server server, Client client) {
-               runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     t.setText("accessory disconnected");
-                  }
-               });
-            }
-
-            @Override
-            public void onClientConnect(Server server, Client client) {
-               runOnUiThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     t.setText("accessory connected");
-                  }
-               });
-            }
-         });
-      } catch (IOException e) {
-         Log.e("DroidOrb", "Error starting server", e);
-      }
    }
 
    @Override
    protected void onStop() {
-      server.stop();
-      mcco.stop();
-
       super.onStop();
    }
 
@@ -150,18 +77,16 @@ public class DroidOrbActivity extends Activity implements OnMissedCallListener {
          @Override
          public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
             try {
-               byte[] data = new byte[6];
-               data[0] = 0; // DroidOrb address
-               data[1] = 1; // set LED pulse command
-               data[2] = (byte) ((ProgressBar) findViewById(R.id.red_pulse)).getProgress();
-               data[3] = (byte) ((ProgressBar) findViewById(R.id.green_pulse)).getProgress();
-               data[4] = (byte) ((ProgressBar) findViewById(R.id.blue_pulse)).getProgress();
-               data[5] = (byte) ((ProgressBar) findViewById(R.id.white_pulse)).getProgress();
+               byte[] data = new byte[4];
+               data[0] = (byte) ((ProgressBar) findViewById(R.id.red_pulse)).getProgress();
+               data[1] = (byte) ((ProgressBar) findViewById(R.id.green_pulse)).getProgress();
+               data[2] = (byte) ((ProgressBar) findViewById(R.id.blue_pulse)).getProgress();
+               data[3] = (byte) ((ProgressBar) findViewById(R.id.white_pulse)).getProgress();
 
-               server.send(data);
+               Main.mBoundService.sendCommand((byte) 0, (byte) 0, data);
             } catch (IOException e) {
-               //Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-               Log.e("DroidOrb", "Error sending command to accessory", e);
+               Toast.makeText(DroidOrbActivity.this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+               Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
             }            
          }
       };
@@ -174,46 +99,39 @@ public class DroidOrbActivity extends Activity implements OnMissedCallListener {
 
    public void onCommandClick(View v) {
       try {
-         server.send(new byte[] { 0, (byte) 254 });
+         Main.mBoundService.sendCommand((byte) 0, (byte) 254, null);
       } catch (IOException e) {
          Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e("DroidOrb", "Error sending command to accessory", e);
+         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
       }
    }
 
    public void onColoursClick(View v) {
       try {
-         byte[] data = new byte[5];
-         data[0] = 0; // DroidOrb address
-         data[1] = 0; // set LED command
-         data[2] = (byte) ((ProgressBar) findViewById(R.id.red)).getProgress();
-         data[3] = (byte) ((ProgressBar) findViewById(R.id.green)).getProgress();
-         data[4] = (byte) ((ProgressBar) findViewById(R.id.blue)).getProgress();
+         byte[] data = new byte[3];
+         data[0] = (byte) ((ProgressBar) findViewById(R.id.red)).getProgress();
+         data[1] = (byte) ((ProgressBar) findViewById(R.id.green)).getProgress();
+         data[2] = (byte) ((ProgressBar) findViewById(R.id.blue)).getProgress();
 
-         server.send(data);
+         Main.mBoundService.sendCommand((byte) 0, (byte) 0, data);
       } catch (IOException e) {
          Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e("DroidOrb", "Error sending command to accessory", e);
+         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
       }
    }
 
-   @Override
-   public void onMissedCall(int missedCalls) {
-      if (Debug.MISSED_CALLS)
-         Log.d(Main.LOG_TAG, "Got missed calls " + missedCalls);
+   public void onMissedCall(View v) {
       try {
          // light up blue when there is a missed call
-         byte[] data = new byte[5];
-         data[0] = 0; // DroidOrb address
-         data[1] = 1; // pulse LED command
-         data[2] = (byte) 0;
-         data[3] = (byte) 0;
-         data[4] = (byte) 10;
+         byte[] data = new byte[3];
+         data[0] = (byte) 0;
+         data[1] = (byte) 0;
+         data[2] = (byte) 10;
 
-         server.send(data);
+         Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
       } catch (IOException e) {
          Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-         Log.e("DroidOrb", "Error sending command to accessory", e);
+         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
       }
    }
 

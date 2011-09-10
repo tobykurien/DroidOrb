@@ -1,0 +1,23 @@
+Android app:
+===========
+
+- app to run as a service
+- "test" button on the main interface for testing
+- when phone is ringing, blinkg white LED
+- missed call notification
+- new e-mail notification
+- new SMS notification
+- config screen to set colours and pulse rates
+
+- When "lights off" event received, put phone into vibrate mode
+- When "lights on" event received, put phone back into previous state
+- Add configuration for above
+
+Arduino firmware:
+===============
+
+- set the upper and lower limits of pulse rates to practical values
+- implement phone command to read light sensor value
+- use light sensor value to adjust brightness of orb
+- send "lights off" event to phone when light sensor reaches lower threshold
+  - then send "lights on" when it goes higher again (with hysteresis)

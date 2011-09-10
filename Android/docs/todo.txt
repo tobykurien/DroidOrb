@@ -1,10 +1,6 @@
 Android app:
 ===========
 
-bugs:
-- service running in background even after exiting app
-  - prevents app from working when re-loaded
-
 - when phone is ringing, blink white LED
 - missed call notification
 - new e-mail notification

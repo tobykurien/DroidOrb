@@ -31,8 +31,8 @@ public class DroidOrbService extends Service {
    // We use it on Notification start, and to cancel it.
    private int NOTIFICATION = 10;
 
-   private Server server = null;
-   private MissedCallsContentObserver mcco;
+   private static Server server = null;
+   private static MissedCallsContentObserver mcco;
    private NotificationManager mNM;
 
    // This is the object that receives interactions from clients. See
@@ -41,6 +41,8 @@ public class DroidOrbService extends Service {
 
    @Override
    public IBinder onBind(Intent arg0) {
+      if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service onBind()");
+      
       return mBinder;
    }
 
@@ -63,6 +65,8 @@ public class DroidOrbService extends Service {
     * @throws IOException
     */
    public void sendCommand(byte deviceId, byte command, byte[] params) throws IOException {
+      if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service sendCommand()");
+
       int paramLen = (params == null ? 0 : params.length);
       byte[] data = new byte[paramLen + 3];
       data[0] = deviceId;
@@ -84,6 +88,7 @@ public class DroidOrbService extends Service {
    @Override
    public void onCreate() {
       super.onCreate();
+      if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service onCreate()");
 
       mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -91,61 +96,73 @@ public class DroidOrbService extends Service {
       // bar.
       showNotification("Waiting for accessory...");
 
-      mcco = new MissedCallsContentObserver(this, new OnMissedCallListener() {
-         @Override
-         public void onMissedCall(int missedCalls) {
-            showNotification("Missed call detected");
-         }
-      });
+      // missed call observer
+      if (mcco == null) {
+         if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service creating missed call observer");
+         
+         mcco = new MissedCallsContentObserver(this, new OnMissedCallListener() {
+            @Override
+            public void onMissedCall(int missedCalls) {
+               showNotification("Missed call detected");
+            }
+         });
+         
+         // start missed calls listener
+         mcco.start();
+      }
 
       // Create TCP server
-      server = new Server(SERVER_PORT);
-      server.addListener(new ServerListener() {
+      if (server == null) {
+         if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service creating TCP/IP server");
+         
+         server = new Server(SERVER_PORT);
+         server.addListener(new ServerListener() {
 
-         @Override
-         public void onServerStopped(Server server) {
-            Log.d(Main.LOG_TAG, "server stopped");
+            @Override
+            public void onServerStopped(Server server) {
+               Log.d(Main.LOG_TAG, "server stopped");
+            }
+
+            @Override
+            public void onServerStarted(Server server) {
+               Log.d(Main.LOG_TAG, "server started");
+            }
+
+            @Override
+            public void onReceive(Client client, final byte[] data) {
+               Log.d(Main.LOG_TAG, "data received " + data[0] + data[1]);
+            }
+
+            @Override
+            public void onClientDisconnect(Server server, Client client) {
+               Log.d(Main.LOG_TAG, "accessory disconnected");
+            }
+
+            @Override
+            public void onClientConnect(Server server, Client client) {
+               showNotification("Accessory connected");
+               Log.d(Main.LOG_TAG, "accessory connected");
+            }
+         });
+         
+         try {
+            server.start();
+         } catch (IOException e) {
+            Log.e(Main.LOG_TAG, "Error starting TCP/IP server", e);
          }
-
-         @Override
-         public void onServerStarted(Server server) {
-            Log.d(Main.LOG_TAG, "server started");
-         }
-
-         @Override
-         public void onReceive(Client client, final byte[] data) {
-            Log.d(Main.LOG_TAG, "data received " + data[0] + data[1]);
-         }
-
-         @Override
-         public void onClientDisconnect(Server server, Client client) {
-            Log.d(Main.LOG_TAG, "accessory disconnected");
-         }
-
-         @Override
-         public void onClientConnect(Server server, Client client) {
-            showNotification("Accessory connected");
-            Log.d(Main.LOG_TAG, "accessory connected");
-         }
-      });
-
-      // start missed calls listener
-      mcco.start();
-
-      try {
-         server.start();
-      } catch (IOException e) {
-         Log.e(Main.LOG_TAG, "Error starting TCP/IP server", e);
       }
    }
 
    @Override
    public void onDestroy() {
+      if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service onDestroy()");
+     
       // Cancel the persistent notification.
       mNM.cancel(NOTIFICATION);
-
-      // Tell the user we stopped.
-      Toast.makeText(this, "DroidOrb stopped", Toast.LENGTH_SHORT).show();
+      server.stop();
+      server = null;
+      mcco.stop();
+      mcco = null;
    }
 
    /**

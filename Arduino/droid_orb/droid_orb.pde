@@ -79,10 +79,23 @@ void adbEventHandler(Connection * connection, adb_eventType event, uint16_t leng
           white_pulse = data[5];
           break;
 
+        case CMD_RESET:
+          reset();          
+          break;
+
+        case CMD_LIGHT_METER:
+          uint8_t light_data[4];
+          light_data[0] = DROID_ORB_ADDR;
+          light_data[1] = CMD_LIGHT_METER;
+          light_data[2] = analogRead(LIGHT_SENSOR);
+          light_data[3] = '\n';
+          phone->write(length, (uint8_t*)&data);
+          break;
+
         case CMD_TEST:          
-          white_pulse = 100; // pulse white LED as a test
-          red_bright = 0xff;
-          blue_pulse = 10;
+          white_pulse = 50; // pulse white LED as a test
+          red_bright = 0xff; // set red LED on
+          blue_pulse = 10; // pulse blue LED
           break;
 
         default:
@@ -185,6 +198,19 @@ void updateLEDs()
   analogWrite(LED_RED, red);
   analogWrite(LED_GREEN, green);
   analogWrite(LED_BLUE, blue);
+}
+
+// reset LEDs to default state
+void reset() {
+  red_bright = red = 0;
+  green_bright = green = 0;
+  blue_bright = blue = 0;
+  updateLEDs();
+
+  red_pulse = 0;
+  green_pulse = 0;
+  blue_pulse = 0;
+  white_pulse = 0;
 }
 
 // main loop

@@ -13,7 +13,7 @@
       <LinearLayout 
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:weightSum="10"
+         android:weightSum="15"
       >
       <Button
          android:text="Test"

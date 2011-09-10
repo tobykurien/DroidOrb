@@ -29,6 +29,11 @@
 
 #define CMD_SET_LED 0
 #define CMD_PULSE_LED 1
+#define CMD_RESET 3
+#define CMD_LIGHT_METER 4
 #define CMD_TEST 254
+
+#define LIGHT_THRESHOLD_LOW = 400;
+#define LIGHT_THRESHOLD_HIGH = 900;
 
 #endif

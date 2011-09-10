@@ -30,6 +30,8 @@ public class DroidOrbActivity extends Activity {
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.main);
+      
+      setupSeekbarListeners();
    }
 
    @Override
@@ -83,7 +85,7 @@ public class DroidOrbActivity extends Activity {
                data[2] = (byte) ((ProgressBar) findViewById(R.id.blue_pulse)).getProgress();
                data[3] = (byte) ((ProgressBar) findViewById(R.id.white_pulse)).getProgress();
 
-               Main.mBoundService.sendCommand((byte) 0, (byte) 0, data);
+               Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
             } catch (IOException e) {
                Toast.makeText(DroidOrbActivity.this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
                Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
@@ -120,13 +122,22 @@ public class DroidOrbActivity extends Activity {
       }
    }
 
+   public void onReset(View v) {
+      try {
+         Main.mBoundService.sendCommand((byte) 0, (byte) 3, null);
+      } catch (IOException e) {
+         Toast.makeText(this, "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+         Log.e(Main.LOG_TAG, "Error sending command to accessory", e);
+      }      
+   }
+   
    public void onMissedCall(View v) {
       try {
-         // light up blue when there is a missed call
+         // pulse red when there is a missed call
          byte[] data = new byte[3];
-         data[0] = (byte) 0;
+         data[0] = (byte) 5;
          data[1] = (byte) 0;
-         data[2] = (byte) 10;
+         data[2] = (byte) 0;
 
          Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
       } catch (IOException e) {

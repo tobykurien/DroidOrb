@@ -44,6 +44,8 @@ uint8_t blue_pulse_val = 0; // value for pulsing
 bool white_on = false;
 uint8_t white_pulse_val = 0; // value for pulsing
 
+bool lights_off = false;
+
 bool in_interrupt = false;
 
 // Event handler for the shell connection. 
@@ -66,6 +68,7 @@ void adbEventHandler(Connection * connection, adb_eventType event, uint16_t leng
       // DroidOrb command
       switch (cmd) {
         case CMD_SET_LED:  
+          print_hex(analogRead(LIGHT_SENSOR), 8);
           red_bright = red = data[2];
           green_bright = green = data[3];
           blue_bright = blue = data[4];
@@ -89,7 +92,7 @@ void adbEventHandler(Connection * connection, adb_eventType event, uint16_t leng
           light_data[1] = CMD_LIGHT_METER;
           light_data[2] = analogRead(LIGHT_SENSOR);
           light_data[3] = '\n';
-          phone->write(length, (uint8_t*)&data);
+          phone->write(4, (uint8_t*)&light_data);
           break;
 
         case CMD_TEST:          
@@ -158,10 +161,14 @@ void timerInterrupt()
   updateLEDs();  
 
   // white LED is simple ON/OFF
-  if (white_pulse > 0) {
-    if (white_pulse_val++ >= white_pulse) {
-      white_pulse_val = 0;
-      digitalWrite(LED_WHITE, white_on = white_on ^ HIGH);
+  if (!lights_off) {
+    if (white_pulse > 0) {
+      if (white_pulse_val++ >= white_pulse) {
+        white_pulse_val = 0;
+        digitalWrite(LED_WHITE, white_on = white_on ^ HIGH);
+      }
+    } else {
+      digitalWrite(LED_WHITE, LOW);
     }
   }
 
@@ -194,23 +201,54 @@ void pulse(uint8_t* r, uint8_t* r_pulse, uint8_t* r_pulse_val, bool* r_dir) {
 // Write current LED brightness values to the actual pins
 void updateLEDs() 
 {
-  // update LED
-  analogWrite(LED_RED, red);
-  analogWrite(LED_GREEN, green);
-  analogWrite(LED_BLUE, blue);
+
+  if (!lights_off) {
+    // update LED
+    analogWrite(LED_RED, red);
+    analogWrite(LED_GREEN, green);
+    analogWrite(LED_BLUE, blue);
+  } else {
+    analogWrite(LED_RED, 0);
+    analogWrite(LED_GREEN, 0);
+    analogWrite(LED_BLUE, 0);
+    digitalWrite(LED_WHITE, LOW);
+  }
 }
 
 // reset LEDs to default state
 void reset() {
-  red_bright = red = 0;
-  green_bright = green = 0;
-  blue_bright = blue = 0;
-  updateLEDs();
-
   red_pulse = 0;
   green_pulse = 0;
   blue_pulse = 0;
   white_pulse = 0;
+
+  red_bright = red = 0;
+  green_bright = green = 0;
+  blue_bright = blue = 0;
+  updateLEDs();
+}
+
+/* prints hex numbers with leading zeroes */
+// copyright, Peter H Anderson, Baltimore, MD, Nov, '07
+// source: http://www.phanderson.com/arduino/arduino_display.html
+void print_hex(int v, int num_places)
+{
+  int mask=0, n, num_nibbles, digit;
+ 
+  for (n=1; n<=num_places; n++) {
+    mask = (mask << 1) | 0x0001;
+  }
+  v = v & mask; // truncate v to specified number of places
+ 
+  num_nibbles = num_places / 4;
+  if ((num_places % 4) != 0) {
+    ++num_nibbles;
+  }
+  do {
+    digit = ((v >> (num_nibbles-1) * 4)) & 0x0f;
+    Serial.print(digit, HEX);
+  } 
+  while(--num_nibbles);
 }
 
 // main loop
@@ -218,5 +256,32 @@ void loop()
 {
   // Poll the ADB subsystem.
   ADB::poll();
+
+  // switch off lights if ambient lighting is dark
+  uint8_t lightVal = analogRead(LIGHT_SENSOR);
+  if (!lights_off && lightVal <= LIGHT_THRESHOLD_LOW) {
+    lights_off = true;
+
+    // let the phone know
+    uint8_t len = 3;
+    uint8_t light_data[len];
+    light_data[0] = DROID_ORB_ADDR;
+    light_data[1] = CMD_LIGHTS_OFF;
+    light_data[2] = '\n';
+    phone->write(len, (uint8_t*)&light_data);
+  }
+
+  // and vice versa
+  if (lights_off && lightVal > LIGHT_THRESHOLD_HIGH) {
+    lights_off = false;
+
+    // let the phone know
+    uint8_t len = 3;
+    uint8_t light_data[len];
+    light_data[0] = DROID_ORB_ADDR;
+    light_data[1] = CMD_LIGHTS_ON;
+    light_data[2] = '\n';
+    phone->write(len, (uint8_t*)&light_data);
+  }
 }
 

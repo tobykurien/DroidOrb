@@ -162,7 +162,9 @@ public class DroidOrbService extends Service {
 
       // The PendingIntent to launch our activity if the user selects this
       // notification
-      PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
+      Intent intent = new Intent(this, Main.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+      PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
       // Set the info for the views that show in the notification panel.
       notification.setLatestEventInfo(this, "DroidOrb", text, contentIntent);

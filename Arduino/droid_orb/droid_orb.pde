@@ -9,6 +9,7 @@
  *  See Github project http://github.com/tobykurien/DroidOrb for latest
  */
 
+#include <Wire.h>
 #include <SPI.h>
 #include <Adb.h>
 
@@ -107,7 +108,14 @@ void adbEventHandler(Connection * connection, adb_eventType event, uint16_t leng
           break;
       }
     } else {
-      // command for a module, send it through SPI
+      // command for a module, send it through I2C
+      Serial.print("\r\nSending I2C addr=");
+      print_hex(dev, 8);
+      Serial.print(" data=");
+      print_hex(data[1], 8);
+      Wire.beginTransmission(dev);
+      Wire.send(data[1]);
+      Wire.endTransmission();
     }
 
     // send ack/nack back to phone
@@ -133,6 +141,9 @@ void setup()
 
   // Initialise serial port
   Serial.begin(115200);
+
+  // Initialise I2C bus
+  Wire.begin();
 
   // Note start time
   lastTime = millis();

@@ -134,6 +134,7 @@ public class DroidOrbService extends Service {
             @Override
             public void onReceive(Client client, final byte[] data) {
                Log.d(Main.LOG_TAG, "data received " + data[0] + data[1]);
+               Toast.makeText(DroidOrbService.this, "DroidOrb data received " + data.toString(), Toast.LENGTH_LONG).show();
             }
 
             @Override

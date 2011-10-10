@@ -121,4 +121,13 @@ public class DroidOrbActivity extends Activity {
       Main.mBoundService.sendCommand((byte) 0, (byte) 1, data);
    }
 
+   public void onModule1Click(View v) {
+      // send command to module 1
+      Main.mBoundService.sendCommand((byte) 1, (byte) 0, null);
+   }
+   
+   public void onModule2Click(View v) {
+      // send another command to module 1
+      Main.mBoundService.sendCommand((byte) 1, (byte) 1, new byte[] { 0, 1, 2 });
+   }   
 }

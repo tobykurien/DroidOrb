@@ -19,9 +19,9 @@ public class GeneralReceiver extends BroadcastReceiver {
       if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)) {         
          if (Debug.RECEIVER) Log.d(Main.LOG_TAG, "Power connected, starting activity");
          // start main activity
-         Intent i = new Intent(context, Main.class);
-         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-         context.startActivity(i);
+         Intent i = new Intent(context, DroidOrbService.class);
+         //i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         context.startService(i);
       }
    }
 

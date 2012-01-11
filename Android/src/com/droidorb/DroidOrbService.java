@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.droidorb.observer.MissedCallsContentObserver;
 import com.droidorb.observer.OnMissedCallListener;
+import com.droidorb.observer.OnRingingListener;
 import com.droidorb.server.Client;
 import com.droidorb.server.Server;
 import com.droidorb.server.ServerListener;
@@ -34,6 +35,7 @@ public class DroidOrbService extends Service {
    private static Server server = null;
    private static MissedCallsContentObserver mcco;
    private NotificationManager mNM;
+   public static OnRingingListener ringListener;
 
    // This is the object that receives interactions from clients. See
    // RemoteService for a more complete example.
@@ -51,7 +53,7 @@ public class DroidOrbService extends Service {
     * the same process as its clients, we don't need to deal with IPC.
     */
    public class LocalBinder extends Binder {
-      DroidOrbService getService() {
+      public DroidOrbService getService() {
          return DroidOrbService.this;
       }
    }
@@ -114,6 +116,24 @@ public class DroidOrbService extends Service {
          mcco.start();
       }
 
+      // ring listener
+      ringListener = new OnRingingListener() {
+         
+         @Override
+         public void onStoppedRinging() {
+            if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service detected ringing stopped");
+            showNotification("Ringing stopped");
+            sendCommand((byte) 0, (byte) 1, new byte[] { 0, 0, 0, 0 });
+         }
+         
+         @Override
+         public void onRinging(String number) {
+            if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service detected ringing");
+            showNotification("Phone ringing");
+            sendCommand((byte) 0, (byte) 1, new byte[] { 0, 0, 0, 50 });
+         }
+      };
+      
       // Create TCP server
       if (server == null) {
          if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service creating TCP/IP server");

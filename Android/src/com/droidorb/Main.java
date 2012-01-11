@@ -57,7 +57,7 @@ public class Main extends Activity {
       bindService(new Intent(Main.this, DroidOrbService.class), mConnection, Context.BIND_AUTO_CREATE);
       mIsBound = true;
       
-      Intent i = new Intent(this, DroidOrbActivity.class);
+      Intent i = new Intent(this, Preferences.class);
       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       startActivity(i);
   }

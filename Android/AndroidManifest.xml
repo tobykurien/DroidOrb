@@ -22,7 +22,11 @@
             android:label="@string/app_name"
             android:name=".DroidOrbActivity" >
         </activity>
-
+        <activity
+            android:label="@string/app_name"
+            android:name=".Preferences" >
+        </activity>
+        
         <service android:name=".DroidOrbService" />
 
         <receiver

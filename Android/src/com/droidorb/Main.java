@@ -1,7 +1,5 @@
 package com.droidorb;
 
-import java.io.IOException;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,7 +7,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 /**
  * This will become the main activity for this app once it is working properly. 
@@ -37,6 +37,25 @@ public class Main extends Activity {
       super.onRestart();
       finish();
    }
+   
+   @Override
+   public boolean onCreateOptionsMenu(Menu menu) {
+      super.onCreateOptionsMenu(menu);
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.main_menu, menu);
+      return true;
+   }
+
+   @Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+      switch (item.getItemId()) {
+         case R.id.menu_test:
+            Intent i = new Intent(this, DroidOrbActivity.class);
+            startActivity(i);
+            break;
+      }
+      return true;
+   }   
    
    private ServiceConnection mConnection = new ServiceConnection() {
       public void onServiceConnected(ComponentName className, IBinder service) {

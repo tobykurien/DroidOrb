@@ -15,9 +15,9 @@ public class EmailContentObserver extends ContentObserver {
 
    private Context context;
    private int lastUnreadCount = 0;
-   private OnMissedCallListener listner;
+   private OnUnreadEmailListener listner;
    
-   public EmailContentObserver(Context context, OnMissedCallListener listner) {
+   public EmailContentObserver(Context context, OnUnreadEmailListener listner) {
       super(null);
       this.context = context;
       this.listner = listner;
@@ -25,6 +25,7 @@ public class EmailContentObserver extends ContentObserver {
 
    public void start() {
       context.getContentResolver().registerContentObserver(GMAIL_URI, true, this);      
+      if (Debug.MISSED_EMAIL)  Log.d(Main.LOG_TAG, "Gmail content observer registered");
    }
 
    public void stop() {
@@ -46,7 +47,7 @@ public class EmailContentObserver extends ContentObserver {
 //      if (Debug.MISSED_EMAIL) Log.d(Main.LOG_TAG, "Cursor count = " + unreadCount);
 //      if (unreadCount > lastUnreadCount) {
 //         lastUnreadCount = unreadCount;
-//         listner.onMissedCall(unreadCount);
+//         listner.onUnreadEmail(unreadCount);
 //      }
    }
    

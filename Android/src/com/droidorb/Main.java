@@ -38,25 +38,6 @@ public class Main extends Activity {
       finish();
    }
    
-   @Override
-   public boolean onCreateOptionsMenu(Menu menu) {
-      super.onCreateOptionsMenu(menu);
-      MenuInflater inflater = getMenuInflater();
-      inflater.inflate(R.menu.main_menu, menu);
-      return true;
-   }
-
-   @Override
-   public boolean onOptionsItemSelected(MenuItem item) {
-      switch (item.getItemId()) {
-         case R.id.menu_test:
-            Intent i = new Intent(this, DroidOrbActivity.class);
-            startActivity(i);
-            break;
-      }
-      return true;
-   }   
-   
    private ServiceConnection mConnection = new ServiceConnection() {
       public void onServiceConnected(ComponentName className, IBinder service) {
          DroidOrbService.LocalBinder binder = (DroidOrbService.LocalBinder)service;

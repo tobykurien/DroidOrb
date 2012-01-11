@@ -10,11 +10,12 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.droidorb.observer.EmailContentObserver;
 import com.droidorb.observer.MissedCallsContentObserver;
 import com.droidorb.observer.OnMissedCallListener;
 import com.droidorb.observer.OnRingingListener;
+import com.droidorb.observer.OnUnreadEmailListener;
 import com.droidorb.server.Client;
 import com.droidorb.server.Server;
 import com.droidorb.server.ServerListener;
@@ -34,6 +35,7 @@ public class DroidOrbService extends Service {
 
    private static Server server = null;
    private static MissedCallsContentObserver mcco;
+   private static EmailContentObserver eco;
    private NotificationManager mNM;
    public static OnRingingListener ringListener;
 
@@ -116,6 +118,23 @@ public class DroidOrbService extends Service {
          mcco.start();
       }
 
+      // unread email observer
+      if (eco == null) {
+         if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service creating unread email observer");
+         
+         eco = new EmailContentObserver(this, new OnUnreadEmailListener() {
+            @Override
+            public void onUnreadEmail(int missedCalls) {
+               if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service detected unread email");
+               showNotification("Unread email detected");
+               sendCommand((byte) 0, (byte) 1, new byte[] { 40, 40, 0, 0 });
+            }
+         });
+         
+         // start missed calls listener
+         eco.start();
+      }
+            
       // ring listener
       ringListener = new OnRingingListener() {
          

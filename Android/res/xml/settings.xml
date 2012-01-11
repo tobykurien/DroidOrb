@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+   xmlns:android="http://schemas.android.com/apk/res/android">
+   <PreferenceCategory
+      android:key="general_settings"
+      android:title="General settings">
+      <CheckBoxPreference
+         android:key="enabled"
+         android:title="Enable"
+         android:summary="Enable DroidOrb"
+         android:defaultValue="true" />
+   </PreferenceCategory>
+</PreferenceScreen>

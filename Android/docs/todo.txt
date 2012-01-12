@@ -3,7 +3,7 @@ Android app:
 
 - implement settings
 - implement missed SMS observer
-- implement anti-theft
+- implement anti-theft sound
 - when phone is ringing, blink white LED
 
 - When "lights off" event received, put phone into vibrate mode

@@ -32,6 +32,9 @@
         <receiver
             android:name=".receiver.GeneralReceiver"
             android:label="DroidOrb Receiver" >
+            <intent-filter >
+                <action android:name="com.droidorb.intent.action.ANTI_THEFT_CHECK"/>
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
 

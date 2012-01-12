@@ -1,4 +1,4 @@
-package com.droidorb.observer;
+package com.droidorb.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 
 import com.droidorb.DroidOrbService;
+import com.droidorb.observer.OnRingingListener;
 
 /**
  * BroadcastReceiver to check when there is an incoming call or outgoing call

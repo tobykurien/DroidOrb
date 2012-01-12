@@ -11,7 +11,8 @@ import com.droidorb.Debug;
 import com.droidorb.Main;
 
 public class EmailContentObserver extends ContentObserver {
-   Uri GMAIL_URI = Uri.parse("content://gmail-ls/");
+   public static Uri GMAIL_URI = Uri.parse("content://gmail-ls/");
+   public static Uri EMAIL_URI = Uri.parse("com.android.email.provider");
 
    private Context context;
    private int lastUnreadCount = 0;
@@ -25,7 +26,8 @@ public class EmailContentObserver extends ContentObserver {
 
    public void start() {
       context.getContentResolver().registerContentObserver(GMAIL_URI, true, this);      
-      if (Debug.MISSED_EMAIL)  Log.d(Main.LOG_TAG, "Gmail content observer registered");
+      context.getContentResolver().registerContentObserver(EMAIL_URI, true, this);      
+      if (Debug.MISSED_EMAIL)  Log.d(Main.LOG_TAG, "Email content observers registered");
    }
 
    public void stop() {
@@ -34,13 +36,14 @@ public class EmailContentObserver extends ContentObserver {
    
    @Override
    public void onChange(boolean selfChange) {
-      if (Debug.MISSED_EMAIL)  Log.d(Main.LOG_TAG, "Got gmail notification");
+      if (Debug.MISSED_EMAIL)  Log.d(Main.LOG_TAG, "Got mail notification");
       
-//      Cursor cursor = context.getContentResolver().query(Calls.CONTENT_URI,
+      // TODO - how do we get the e-mail counts for the GMail and EMail clients?
+//      Cursor cursor = context.getContentResolver().query(GMAIL_URI,
 //               null,
-//               Calls.TYPE + " = ? AND " + Calls.NEW + " = ?",
-//               new String[] { Integer.toString(Calls.MISSED_TYPE), "1" },
-//               Calls.DATE + " DESC ");
+//               null,
+//               null,
+//               null);
 //
 //      // check if the number of missed calls has changed
 //      int unreadCount = cursor.getCount();

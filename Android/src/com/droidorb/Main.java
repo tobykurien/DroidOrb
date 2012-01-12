@@ -1,15 +1,17 @@
 package com.droidorb;
 
+import com.droidorb.observer.EmailContentObserver;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 
 /**
  * This will become the main activity for this app once it is working properly. 

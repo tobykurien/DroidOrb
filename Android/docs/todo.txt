@@ -1,15 +1,13 @@
 Android app:
 ===========
 
+- implement settings
+- implement missed SMS observer
+- implement anti-theft
 - when phone is ringing, blink white LED
-- missed call notification
-- new e-mail notification
-- new SMS notification
-- config screen to set colours and pulse rates
 
 - When "lights off" event received, put phone into vibrate mode
 - When "lights on" event received, put phone back into previous state
-- Add configuration for above
 
 Arduino firmware:
 ===============

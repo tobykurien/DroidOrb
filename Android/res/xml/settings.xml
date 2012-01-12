@@ -1,13 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-   xmlns:android="http://schemas.android.com/apk/res/android">
-   <PreferenceCategory
-      android:key="general_settings"
-      android:title="General settings">
-      <CheckBoxPreference
-         android:key="enabled"
-         android:title="Enable"
-         android:summary="Enable DroidOrb"
-         android:defaultValue="true" />
-   </PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="general_settings"
+        android:title="General settings" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="enabled"
+            android:summary="Enable DroidOrb"
+            android:title="Enable" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enabled"
+            android:key="anti_theft_enabled"
+            android:summary="User must unlock phone after un-docking to prevent alarm"
+            android:title="Enable Anti-theft" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="enabled"
+            android:key="night_mute_enabled"
+            android:summary="When all the lights are off, put phone into silent mode"
+            android:title="Mute phone at night" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="night_mute_enabled"
+            android:key="night_mute_vibrate"
+            android:summary="Vibrate in night mute mode"
+            android:title="Vibrate phone at night" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="night_mute_enabled"
+            android:key="night_mute_contacts_unmute"
+            android:summary="Ring if call or SMS is from a phone contact"
+            android:title="Contacts unmute at night" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enabled"
+            android:key="call_enabled"
+            android:summary="Enable phone ringer and missed call notification"
+            android:title="Call notification" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enabled"
+            android:key="sms_enabled"
+            android:summary="Enable unread SMS notification"
+            android:title="SMS notification" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enabled"
+            android:key="email_enabled"
+            android:summary="Enable unread e-mail notification"
+            android:title="Email notification" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enabled"
+            android:key="calendar_enabled"
+            android:summary="Enable calendar event notification"
+            android:title="Calendar notification" />
+    </PreferenceCategory>
+    <PreferenceScreen
+        android:key="theme_settings"
+        android:title="Notification theme settings" 
+        android:dependency="enabled">
+        <ListPreference
+            android:dependency="call_enabled"
+            android:dialogTitle="Colour for call notifications"
+            android:entries="@array/theme_colours"
+            android:entryValues="@array/theme_colours_val"
+            android:key="call_colour"
+            android:summary="Notification colour for call notification"
+            android:title="Call colour" />
+        <ListPreference
+            android:dependency="call_enabled"
+            android:dialogTitle="Speed for call notifications"
+            android:entries="@array/theme_speeds"
+            android:entryValues="@array/theme_speeds_val"
+            android:key="call_speed"
+            android:summary="Notification speed for call notification"
+            android:title="Call speed" />
+        <ListPreference
+            android:dependency="sms_enabled"
+            android:dialogTitle="Colour for SMS notifications"
+            android:entries="@array/theme_colours"
+            android:entryValues="@array/theme_colours_val"
+            android:key="sms_colour"
+            android:summary="Notification colour for SMS notification"
+            android:title="SMS colour" />
+        <ListPreference
+            android:dependency="sms_enabled"
+            android:dialogTitle="Speed for SMS notifications"
+            android:entries="@array/theme_speeds"
+            android:entryValues="@array/theme_speeds_val"
+            android:key="sms_speed"
+            android:summary="Notification speed for SMS notification"
+            android:title="SMS speed" />
+        <ListPreference
+            android:dependency="email_enabled"
+            android:dialogTitle="Colour for email notifications"
+            android:entries="@array/theme_colours"
+            android:entryValues="@array/theme_colours_val"
+            android:key="email_colour"
+            android:summary="Notification colour for email notification"
+            android:title="Email colour" />
+        <ListPreference
+            android:dependency="email_enabled"
+            android:dialogTitle="Speed for email notifications"
+            android:entries="@array/theme_speeds"
+            android:entryValues="@array/theme_speeds_val"
+            android:key="email_speed"
+            android:summary="Notification speed for email notification"
+            android:title="Email speed" />
+    </PreferenceScreen>
+
 </PreferenceScreen>

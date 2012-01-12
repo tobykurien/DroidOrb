@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="theme_colours">
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Purple</item>
+        <item>Orange</item>
+        <item>Yellow</item>
+        <item>Turquoise</item>
+    </string-array>
+    <string-array name="theme_colours_val">
+        <item>ff000000</item>
+        <item>00ff0000</item>
+        <item>0000ff00</item>
+        <item>ffff0000</item>
+        <item>f000f000</item>
+        <item>ff00ff00</item>
+        <item>00ffff00</item>
+    </string-array>
+    <string-array name="theme_speeds">
+        <item>Subtle</item>
+        <item>Medium</item>
+        <item>Fast</item>
+        <item>Look-at-me!</item>
+    </string-array>
+    <string-array name="theme_speeds_val">
+        <item>f0</item>
+        <item>90</item>
+        <item>10</item>
+        <item>05</item>
+    </string-array>
+
+</resources>

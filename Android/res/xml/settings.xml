@@ -10,7 +10,6 @@
             android:summary="Enable DroidOrb"
             android:title="Enable" />
         <CheckBoxPreference
-            android:enabled="false"
             android:defaultValue="true"
             android:dependency="enabled"
             android:key="anti_theft_enabled"

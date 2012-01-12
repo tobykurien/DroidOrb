@@ -7,15 +7,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.droidorb.observer.EmailContentObserver;
 import com.droidorb.observer.MissedCallsContentObserver;
 import com.droidorb.observer.OnMissedCallListener;
 import com.droidorb.observer.OnRingingListener;
 import com.droidorb.observer.OnUnreadEmailListener;
+import com.droidorb.receiver.GeneralReceiver;
 import com.droidorb.server.Client;
 import com.droidorb.server.Server;
 import com.droidorb.server.ServerListener;
@@ -38,6 +41,7 @@ public class DroidOrbService extends Service {
    private static EmailContentObserver eco;
    private NotificationManager mNM;
    public static OnRingingListener ringListener;
+   private static GeneralReceiver generalReceiver;
 
    // This is the object that receives interactions from clients. See
    // RemoteService for a more complete example.
@@ -97,6 +101,11 @@ public class DroidOrbService extends Service {
 
       mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+      // register for Screen unlocks (can only be done in code)
+      IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+      generalReceiver = new GeneralReceiver();
+      registerReceiver(generalReceiver, filter);    
+      
       // Display a notification about us starting. We put an icon in the status
       // bar.
       showNotification("Started");
@@ -115,7 +124,12 @@ public class DroidOrbService extends Service {
          });
          
          // start missed calls listener
-         mcco.start();
+         try {
+            if (mcco != null) mcco.start();
+         } catch (Exception e) {
+            Toast.makeText(this, "ERROR: Cannot register missed call observer", Toast.LENGTH_LONG).show();
+            // fails sometimes
+         }
       }
 
       // unread email observer
@@ -132,7 +146,7 @@ public class DroidOrbService extends Service {
          });
          
          // start missed calls listener
-         eco.start();
+         if (eco != null) eco.start();
       }
             
       // ring listener
@@ -200,6 +214,7 @@ public class DroidOrbService extends Service {
    @Override
    public void onDestroy() {
       if (Debug.SERVICE) Log.d(Main.LOG_TAG, "Service onDestroy()");
+      if (generalReceiver != null) unregisterReceiver(generalReceiver);    
      
       // Cancel the persistent notification.
       mNM.cancel(NOTIFICATION);

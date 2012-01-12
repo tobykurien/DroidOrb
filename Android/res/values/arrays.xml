@@ -23,13 +23,16 @@
         <item>Subtle</item>
         <item>Medium</item>
         <item>Fast</item>
-        <item>Look-at-me!</item>
+        <item>No blink</item>
+        <item>Faster for more items</item>
     </string-array>
     <string-array name="theme_speeds_val">
         <item>f0</item>
         <item>90</item>
         <item>10</item>
         <item>05</item>
+        <item>0</item>
+        <item>-1</item>
     </string-array>
 
 </resources>

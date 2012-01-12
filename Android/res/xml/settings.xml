@@ -10,12 +10,29 @@
             android:summary="Enable DroidOrb"
             android:title="Enable" />
         <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="true"
             android:dependency="enabled"
             android:key="anti_theft_enabled"
             android:summary="User must unlock phone after un-docking to prevent alarm"
             android:title="Enable Anti-theft" />
         <CheckBoxPreference
+            android:enabled="false"
+            android:defaultValue="true"
+            android:dependency="enabled"
+            android:key="charge_enabled"
+            android:summary="Slow blink white during charging"
+            android:title="Enable Charging notification" />
+        <CheckBoxPreference
+            android:enabled="false"
+            android:defaultValue="false"
+            android:dependency="enabled"
+            android:key="mix_notifications"
+            android:summaryOff="Display only last notification"
+            android:summaryOn="Mix all notifications together"
+            android:title="Mix notifications" />
+        <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="false"
             android:dependency="enabled"
             android:key="night_mute_enabled"
@@ -40,28 +57,32 @@
             android:summary="Enable phone ringer and missed call notification"
             android:title="Call notification" />
         <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="true"
             android:dependency="enabled"
             android:key="sms_enabled"
             android:summary="Enable unread SMS notification"
             android:title="SMS notification" />
         <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="true"
             android:dependency="enabled"
             android:key="email_enabled"
             android:summary="Enable unread e-mail notification"
             android:title="Email notification" />
         <CheckBoxPreference
+            android:enabled="false"
             android:defaultValue="true"
             android:dependency="enabled"
             android:key="calendar_enabled"
             android:summary="Enable calendar event notification"
             android:title="Calendar notification" />
     </PreferenceCategory>
+
     <PreferenceScreen
+        android:dependency="enabled"
         android:key="theme_settings"
-        android:title="Notification theme settings" 
-        android:dependency="enabled">
+        android:title="Notification theme settings" >
         <ListPreference
             android:dependency="call_enabled"
             android:dialogTitle="Colour for call notifications"
@@ -110,6 +131,21 @@
             android:key="email_speed"
             android:summary="Notification speed for email notification"
             android:title="Email speed" />
+    </PreferenceScreen>
+    <PreferenceScreen
+        android:dependency="enabled"
+        android:key="module_settings"
+        android:title="Modules" >
+        <PreferenceScreen
+            android:enabled="false"
+            android:key="module_panic"
+            android:title="Panic button" >
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="modeul_panic_enabled"
+                android:summary="Place emergency call when panic button is pushed"
+                android:title="Enable panic button" />
+        </PreferenceScreen>
     </PreferenceScreen>
 
 </PreferenceScreen>

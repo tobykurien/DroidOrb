@@ -25,8 +25,25 @@ public class EmailContentObserver extends ContentObserver {
    }
 
    public void start() {
-      context.getContentResolver().registerContentObserver(GMAIL_URI, true, this);      
-      context.getContentResolver().registerContentObserver(EMAIL_URI, true, this);      
+	   
+      try 
+      {
+    	  context.getContentResolver().registerContentObserver(GMAIL_URI, true, this);
+      }
+      catch ( Exception e )
+      {
+    	  Log.d(Main.LOG_TAG, "Error registering email content observer: gmail");
+      }
+      
+      try 
+      {
+      context.getContentResolver().registerContentObserver(EMAIL_URI, true, this);
+      }
+      catch ( Exception e )
+      {
+    	  Log.d(Main.LOG_TAG, "Error registering email content observer: com.android.email.provider");
+      }
+      
       if (Debug.MISSED_EMAIL)  Log.d(Main.LOG_TAG, "Email content observers registered");
    }
 
